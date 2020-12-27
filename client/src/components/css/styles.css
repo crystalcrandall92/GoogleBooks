@@ -1,0 +1,23 @@
+.header {
+    background-color: teal;
+    padding: 30px;
+    text-align: center;
+    font-size: 35px;
+    color: white;
+  }
+
+  .center {
+    margin: auto;
+    width: 50%;
+    border: 3px solid teal;
+    padding: 5px;
+  }
+
+  .centerform{
+    margin: auto;
+    width: 10%;
+  }
+
+  .float {
+    float: right;
+  }
