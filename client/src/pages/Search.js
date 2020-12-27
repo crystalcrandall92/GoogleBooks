@@ -12,46 +12,52 @@ class Search extends Component {
     books: [],
   };
 
-  bookSearch = searchLookup => {
-    API.getBooks(searchLookup)
-      .then(res => {
-        this.setState({ books: res.data.items.map(bookData => this.createBook(bookData)) })
+  bookSearch = async searchLookup => {
+    try {
+      const res = await API.getBooks(searchLookup)
+      console.log(res)
+      this.setState({
+        books: res.data.items.map(bookData => this.createBook(bookData.volumeInfo))
       })
-  };
-
-  // Same items in models/book.js is used here for the data of the book 
-  createBook = bookData => {
-    return  {
-      _id: bookData.id,
-      title: bookData.volumeInfo.title,
-      authors: bookData.volumeInfo.authors,
-      description: bookData.volumeInfo.description,
-      image: bookData.volumeInfo.imageLinks.thumbnail,
-      link: bookData.volumeInfo.previewLink
+    } catch (error) {
+      console.warn(error)
     }
-  }
-
-  handleInputChange = e => {
-    const name = e.target.name;
-    const value = e.target.value;
-    this.setState({[name]: value});
   };
+
+  createBook = (bookData) => ({
+    title: bookData.title,
+    authors: bookData.authors,
+    description: bookData.description,
+    image: bookData.imageLinks ? bookData.imageLinks.thumbnail : undefined,
+    link: bookData.previewLink
+  })
+
+  handleInputChange = e =>
+    this.setState({ [e.target.name]: e.target.value });
 
   handleFormSubmit = e => {
     e.preventDefault();
     this.bookSearch(this.state.search);
   };
 
+  handleSavedBooks = async book => {
+    try {
+      await API.saveBook(book)
+    } catch (error) {
+      console.warn(error)
+    }
+  }
+
   render() {
     return (
       <div>
-        <Nav/>
-        <Header/>
+        <Nav />
+        <Header />
         <SearchBox className="centerform" search={this.state.search}
-        handleInputChange={this.handleInputChange}
-        handleFormSubmit={this.handleFormSubmit}/>
+          handleInputChange={this.handleInputChange}
+          handleFormSubmit={this.handleFormSubmit} />
         <h1>Your Search</h1>
-        <BookContainer books={this.state.books}/>
+        <BookContainer books={this.state.books} action={this.handleSavedBooks} method="Save" />
       </div>
     )
   }

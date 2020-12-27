@@ -14,6 +14,16 @@ class Saved extends Component {
     API.savedBooks()
       .then(savedBooks => this.setState({ savedBooks: savedBooks }))
   }
+
+  handleDeleteBooks = async book => {
+    try {
+      const res = await API.deleteBook(book._id);
+      this.setState({ savedBooks: this.state.savedBooks.filter(book => book._id !== res._id) })
+    } catch (error) {
+      console.warn(error)
+    }
+  }
+
   // Renders savedBooks 
   render() {
     return (
@@ -21,7 +31,7 @@ class Saved extends Component {
         <Nav />
         <Header />
         <h1>Your Saved Books</h1>
-        <BookContainer books={this.state.savedBooks} />
+        <BookContainer books={this.state.savedBooks} action={this.handleDeleteBooks} method="Delete" color="danger" />
       </div>
     )
   }
